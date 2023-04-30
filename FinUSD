@@ -1,0 +1,46 @@
+
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# load cryptocurrency data into a pandas dataframe
+data = pd.read_csv('crypto_data.csv', index_col=0, parse_dates=True)
+
+# create a line chart of the closing prices over time
+plt.plot(data.index, data['Close'], label='Closing Price')
+plt.xlabel('Date')
+plt.ylabel('Price (USD)')
+plt.title('Closing Prices Over Time')
+plt.legend()
+plt.show()
+
+# create a candlestick chart of the open, high, low, and close prices
+from mpl_finance import candlestick_ohlc
+import matplotlib.dates as mdates
+
+ohlc = data[['Open', 'High', 'Low', 'Close']].reset_index().values
+
+# convert the timestamp to a matplotlib date format
+ohlc[:,0] = mdates.date2num(ohlc[:,0])
+
+plt.figure(figsize=(12,8))
+candlestick_ohlc(plt.gca(), ohlc, width=0.6, colorup='green', colordown='red')
+plt.xlabel('Date')
+plt.ylabel('Price (USD)')
+plt.title('Candlestick Chart')
+plt.show()
+
+# create a histogram of the daily percentage change in price
+returns = data['Close'].pct_change()
+plt.hist(returns.dropna(), bins=50)
+plt.xlabel('Daily Percentage Change')
+plt.ylabel('Frequency')
+plt.title('Histogram of Daily Returns')
+plt.show()
+
+# create a scatter plot of the daily returns vs. the volume traded
+volume = data['Volume']
+plt.scatter(returns, volume, alpha=0.5)
+plt.xlabel('Daily Percentage Change')
+plt.ylabel('Volume Traded')
+plt.title('Scatter Plot of Daily Returns vs. Volume Traded')
+plt.show()
